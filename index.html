@@ -12,7 +12,6 @@
       overflow: hidden;
       background: #000;
     }
-
     iframe {
       width: 100%;
       height: 100%;
@@ -20,7 +19,6 @@
       background: #000;
       display: block;
     }
-
     #fallback {
       position: absolute;
       inset: 0;
@@ -32,41 +30,40 @@
       text-align: center;
       padding: 1em;
     }
-    #fallback a {
-      color: #4af;
-    }
+    #fallback a { color: #4af; }
   </style>
 </head>
 <body>
-  <iframe id="embed"
+  <iframe
+    id="embed"
     src="https://embed-proxy.aj-xanman-47e.workers.dev/?url=https://bypassedlol.github.io/Seasaw/"
     allow="fullscreen; clipboard-read; clipboard-write; encrypted-media"
-    sandbox="allow-scripts allow-forms allow-popups allow-modals"
-    style="width:100%;height:100%;border:none;background:#000;">
-  </iframe>
+    sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"
+    style="width:100%;height:100%;border:none;background:#000;"
+  ></iframe>
+
   <div id="fallback">
-    <p>This site could not load inside the embed. <br>
+    <p>This site could not load inside the embed.<br>
     <a href="https://bypassedlol.github.io/Seasaw/" target="_blank" rel="noopener">Open directly</a></p>
   </div>
 
   <script>
-    // Simple check if iframe loads properly; if blocked, show fallback
     const frame = document.getElementById("embed");
     const fallback = document.getElementById("fallback");
 
-    frame.addEventListener("error", () => fallback.style.display = "flex");
-    frame.addEventListener("load", () => {
-      // Some extensions replace the content with blank page — this helps detect that.
-      setTimeout(() => {
-        try {
-          if (!frame.contentDocument || frame.contentDocument.body.innerHTML.trim() === "") {
-            fallback.style.display = "flex";
-          }
-        } catch (e) {
-          // Cross-origin frames throw when accessed — ignore that.
-        }
-      }, 2000);
+    frame.addEventListener("error", () => {
+      fallback.style.display = "flex";
     });
+
+    frame.addEventListener("load", () => {
+      fallback.style.display = "none";
+    });
+
+    // If iframe never loads
+    setTimeout(() => {
+      const loaded = frame.contentWindow && frame.contentWindow.location.href !== "about:blank";
+      if (!loaded) fallback.style.display = "flex";
+    }, 8000);
   </script>
 </body>
 </html>
